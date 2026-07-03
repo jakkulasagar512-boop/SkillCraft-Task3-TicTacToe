@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillCraft Gaming Project</title>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600&display=swap');
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:'Poppins',sans-serif;
+background:linear-gradient(-45deg,#0f2027,#203a43,#6a11cb,#2575fc);
+background-size:400% 400%;
+animation:bgMove 10s ease infinite;
+min-height:100vh;
+padding:30px;
+}
+
+@keyframes bgMove{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
+
+h1{
+font-family:'Orbitron',sans-serif;
+font-size:42px;
+color:#00ffff;
+text-align:center;
+margin-bottom:30px;
+text-shadow:0 0 20px cyan;
+}
+
+.container{
+width:600px;
+max-width:95%;
+margin:30px auto;
+padding:25px;
+background:rgba(255,255,255,.08);
+border-radius:20px;
+backdrop-filter:blur(15px);
+box-shadow:0 0 25px rgba(0,255,255,.3);
+}
+
+.container h2{
+color:#FFD700;
+font-family:'Orbitron',sans-serif;
+margin-bottom:20px;
+text-align:center;
+}
+
+#question{
+color:white;
+font-size:22px;
+margin-bottom:20px;
+text-align:center;
+}
+
+.option{
+width:100%;
+padding:14px;
+margin:10px 0;
+border:none;
+border-radius:10px;
+font-size:17px;
+font-weight:bold;
+cursor:pointer;
+background:linear-gradient(45deg,#00c6ff,#0072ff);
+color:white;
+transition:.3s;
+}
+
+.option:hover{
+transform:scale(1.05);
+background:linear-gradient(45deg,#ff512f,#dd2476);
+}
+
+button{
+padding:12px 25px;
+border:none;
+border-radius:10px;
+font-size:17px;
+font-weight:bold;
+cursor:pointer;
+background:linear-gradient(45deg,#ff512f,#dd2476);
+color:white;
+display:block;
+margin:20px auto;
+transition:.3s;
+}
+
+button:hover{
+transform:scale(1.08);
+}
+
+#result,#status{
+color:white;
+font-size:22px;
+text-align:center;
+margin-top:15px;
+font-weight:bold;
+}
+
+.board{
+display:grid;
+grid-template-columns:repeat(3,100px);
+gap:10px;
+justify-content:center;
+margin-top:20px;
+}
+
+.cell{
+width:100px;
+height:100px;
+background:white;
+border-radius:12px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:45px;
+font-family:'Orbitron',sans-serif;
+cursor:pointer;
+transition:.3s;
+}
+
+.cell:hover{
+transform:scale(1.08);
+background:#00ffff;
+}
+
+.x{
+color:#00bfff;
+}
+
+.o{
+color:#ff1744;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>🎮 SkillCraft Gaming Project</h1>
+
+<div class="container">
+
+<h2>🧠 Quiz Challenge</h2>
+
+<div id="question"></div>
+
+<div id="options"></div>
+
+<button id="nextBtn">Next</button>
+
+<div id="result"></div>
+
+</div>
+
+<div class="container">
+
+<h2>🎮 Tic Tac Toe Arena</h2>
+
+<div class="board">
+
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell"></div>
+
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell"></div>
+
+<div class="cell"></div>
+<div class="cell"></div>
+<div class="cell"></div>
+
+</div>
+
+<h2 id="status">Player X Turn</h2>
+
+<button onclick="restartGame()">Restart Game</button>
+
+</div>
+
+<script>
+    const questions=[
+{
+question:"Which language is used for web pages?",
+options:["Java","Python","HTML","C"],
+answer:"HTML"
+},
+{
+question:"CSS stands for?",
+options:[
+"Cascading Style Sheets",
+"Computer Style Sheets",
+"Creative Style Sheet",
+"Color Style Sheet"
+],
+answer:"Cascading Style Sheets"
+},
+{
+question:"JavaScript is mainly used for?",
+options:[
+"Styling",
+"Interactivity",
+"Database",
+"Operating System"
+],
+answer:"Interactivity"
+}
+];
+
+let current=0;
+let score=0;
+
+const question=document.getElementById("question");
+const options=document.getElementById("options");
+const nextBtn=document.getElementById("nextBtn");
+const result=document.getElementById("result");
+
+function loadQuestion(){
+
+let q=questions[current];
+
+question.innerHTML=q.question;
+
+options.innerHTML="";
+
+q.options.forEach(option=>{
+
+let btn=document.createElement("button");
+
+btn.className="option";
+
+btn.innerHTML=option;
+
+btn.onclick=function(){
+
+if(option===q.answer){
+
+score++;
+
+}
+
+document.querySelectorAll(".option").forEach(x=>x.disabled=true);
+
+};
+
+options.appendChild(btn);
+
+});
+
+}
+
+nextBtn.onclick=function(){
+
+current++;
+
+if(current<questions.length){
+
+loadQuestion();
+
+}
+
+else{
+
+question.innerHTML="🏆 Congratulations!";
+
+options.innerHTML="";
+
+nextBtn.style.display="none";
+
+result.innerHTML="🎉 Your Score : "+score+"/"+questions.length;
+
+}
+
+};
+
+loadQuestion();
+const cells=document.querySelectorAll(".cell");
+
+const status=document.getElementById("status");
+
+let currentPlayer="X";
+
+let gameActive=true;
+
+const winPatterns=[
+[0,1,2],
+[3,4,5],
+[6,7,8],
+[0,3,6],
+[1,4,7],
+[2,5,8],
+[0,4,8],
+[2,4,6]
+];
+
+cells.forEach(cell=>{
+cell.addEventListener("click",cellClick);
+});
+
+function cellClick(){
+
+if(this.innerHTML!=="" || !gameActive){
+
+return;
+
+}
+
+this.innerHTML=currentPlayer;
+
+this.classList.add(currentPlayer.toLowerCase());
+
+checkWinner();
+
+if(gameActive){
+
+currentPlayer=currentPlayer==="X"?"O":"X";
+
+status.innerHTML="Player "+currentPlayer+" Turn";
+
+}
+
+}
+
+function checkWinner(){
+
+for(let pattern of winPatterns){
+
+let a=cells[pattern[0]].innerHTML;
+let b=cells[pattern[1]].innerHTML;
+let c=cells[pattern[2]].innerHTML;
+
+if(a!=="" && a===b && b===c){
+
+status.innerHTML="🏆 Player "+a+" Wins";
+
+gameActive=false;
+
+return;
+
+}
+
+}
+
+let draw=true;
+
+cells.forEach(cell=>{
+
+if(cell.innerHTML===""){
+
+draw=false;
+
+}
+
+});
+
+if(draw){
+
+status.innerHTML="🤝 Match Draw";
+
+gameActive=false;
+
+}
+
+}
+
+function restartGame(){
+
+cells.forEach(cell=>{
+
+cell.innerHTML="";
+
+cell.classList.remove("x","o");
+
+});
+
+currentPlayer="X";
+
+gameActive=true;
+
+status.innerHTML="Player X Turn";
+
+}
+
+</script>
+
+</body>
+</html>
